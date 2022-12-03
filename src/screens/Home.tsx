@@ -2,8 +2,13 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import {useIsFocused} from '@react-navigation/native';
-import {faCheck, faDroplet, faMinus} from '@fortawesome/free-solid-svg-icons';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {
+  faCheck,
+  faDroplet,
+  faMinus,
+  faPlus,
+} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {useEffect, useState} from 'react';
 import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
@@ -30,15 +35,19 @@ import axios from 'axios';
 import {BASE_URL} from '../config';
 import {fullDate} from '../helper';
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import HomeHeader from './HomeHeader';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const HomeView = ({}) => {
   const isFocused = useIsFocused();
-
+  const navigation = useNavigation();
   const token = useSelector(state => state.Reducers.authToken);
   const [userInfo, setUserInfo] = useState({});
   const [statusDeliver, setStatusDeliver] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
+  const [amount, setAmount] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
 
   const authAxios = axios.create({
     baseURL: BASE_URL,
@@ -50,6 +59,7 @@ const HomeView = ({}) => {
   const onRefresh = () => {
     //Clear old data of the list
     setUserInfo({});
+    setAmount(0);
     //Call the Service to get the latest data
     getData();
     setStatusDeliver('');
@@ -66,6 +76,10 @@ const HomeView = ({}) => {
         );
         console.log(res.data.data);
         setRefreshing(false);
+        setAmount(
+          res.data.data.case_has_transactionsdetail.qty *
+            res.data.data.case_has_transactionsdetail.products.price,
+        );
       })
       .catch(e => {
         console.log(`register error ${e}`);
@@ -74,8 +88,21 @@ const HomeView = ({}) => {
   };
 
   useEffect(() => {
+    setShowAlert(false);
     getData();
+    setAmount(0);
   }, [isFocused]);
+
+  const tampilModal = () => {
+    setShowAlert(true);
+  };
+  const sembunyiModal = () => {
+    setShowAlert(false);
+  };
+  const cancelOrder = () => {
+    console.log('order dibatalkan');
+    setShowAlert(false);
+  };
 
   const labels = ['Menunggu', 'Diantar', 'Sampai'];
 
@@ -109,406 +136,431 @@ const HomeView = ({}) => {
   };
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          //refresh control used for the Pull to Refresh
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
-      automaticallyAdjustContentInsets={false}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}>
-      <View style={styles.body}>
-        <View style={styles.bodyContent}>
-          <View style={{flexDirection: 'column'}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                marginTop: 100,
-              }}>
-              <Text
-                style={{
-                  fontFamily: 'PoppinsRegular',
-                  color: 'white',
-                  fontSize: 15,
-                }}>
-                Status Pengiriman
-              </Text>
-            </View>
-
-            <View
-              style={{
-                position: 'relative',
-                flexDirection: 'column',
-                height: hp('8%'),
-                width: wp('90%'),
-                borderColor: '#ddd',
-                borderRadius: 10,
-                marginTop: 10,
-                padding: 10,
-                backgroundColor: '#D6E4E5',
-                elevation: 5,
-                alignContent: 'center',
-              }}>
-              <StepIndicator
-                customStyles={customStyles}
-                currentPosition={dict[statusDeliver]}
-                labels={labels}
-                stepCount={3}
+    <View>
+      {userInfo ? (
+        <View>
+          <HomeHeader amount={amount} />
+          <AwesomeAlert
+            show={showAlert}
+            showProgress={false}
+            useNativeDriver={true}
+            overlayStyle={{height: '100%'}}
+            title="Peringatan"
+            message="Batalkan pesanan?"
+            closeOnTouchOutside={false}
+            closeOnHardwareBackPress={false}
+            showCancelButton={true}
+            showConfirmButton={true}
+            cancelText="Tidak yakin"
+            confirmText="Ya, Batalkan"
+            confirmButtonColor="#DD6B55"
+            onCancelPressed={() => {
+              sembunyiModal();
+            }}
+            onConfirmPressed={() => {
+              cancelOrder();
+            }}
+          />
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                //refresh control used for the Pull to Refresh
+                refreshing={refreshing}
+                onRefresh={onRefresh}
               />
-            </View>
-          </View>
-          <View style={{flexDirection: 'column'}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 20,
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontFamily: 'PoppinsRegular',
-                  color: 'white',
-                  fontSize: 15,
-                }}>
-                Detail Pemesanan
-              </Text>
-            </View>
-            <View
-              style={{
-                position: 'relative',
-                flexDirection: 'column',
-
-                width: wp('90%'),
-                borderColor: '#ddd',
-                borderRadius: 15,
-                marginTop: 10,
-                padding: 10,
-                backgroundColor: '#fff',
-                elevation: 5,
-              }}>
-              {/* Coin and symbol */}
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('30%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginBottom: 10,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginVertical: 5,
-                    alignItems: 'center',
-                    marginHorizontal: 4,
-                  }}>
-                  <Text
+            }
+            automaticallyAdjustContentInsets={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}>
+            <View style={styles.body}>
+              <View style={styles.bodyContent}>
+                <View style={{flexDirection: 'column'}}>
+                  <View
                     style={{
-                      fontFamily: 'PoppinsBold',
-                      color: '#333',
-                      fontSize: 15,
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      marginTop: 100,
                     }}>
-                    Rincian Pemesan
-                  </Text>
-                </View>
-              </SkeletonContent>
-
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    No HP
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#65647C',
-                      fontSize: 15,
-                    }}>
-                    {userInfo.customer?.user?.phone}
-                  </Text>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    Desa
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#65647C',
-                      fontSize: 15,
-                    }}>
-                    {userInfo.customer?.villages?.village_name}
-                  </Text>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    Nama
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#65647C',
-                      fontSize: 15,
-                    }}>
-                    {userInfo.customer?.nama_customer}
-                  </Text>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('30%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    marginBottom: 10,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginVertical: 10,
-                    alignItems: 'center',
-                    marginHorizontal: 4,
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsBold',
-                      color: '#333',
-                      fontSize: 15,
-                    }}>
-                    Rincian Pesanan
-                  </Text>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    Tanggal
-                  </Text>
-                  <TouchableOpacity>
                     <Text
                       style={{
                         fontFamily: 'PoppinsRegular',
-                        color: '#65647C',
+                        color: 'white',
                         fontSize: 15,
                       }}>
-                      {fullDate(
-                        userInfo?.case_has_transactionsdetail?.created_at,
-                      )}
+                      Status Pengiriman
                     </Text>
-                  </TouchableOpacity>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
+                  </View>
+
+                  <View
                     style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
+                      position: 'relative',
+                      flexDirection: 'column',
+                      height: hp('8%'),
+                      width: wp('90%'),
+                      borderColor: '#ddd',
+                      borderRadius: 10,
+                      marginTop: 10,
+                      padding: 10,
+                      backgroundColor: '#D6E4E5',
+                      elevation: 5,
+                      alignContent: 'center',
                     }}>
-                    No. Nota
-                  </Text>
-                  <TouchableOpacity>
+                    <StepIndicator
+                      customStyles={customStyles}
+                      currentPosition={dict[statusDeliver]}
+                      labels={labels}
+                      stepCount={3}
+                    />
+                  </View>
+                </View>
+                <View style={{flexDirection: 'column'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 20,
+                      alignItems: 'center',
+                    }}>
                     <Text
                       style={{
                         fontFamily: 'PoppinsRegular',
-                        color: '#65647C',
+                        color: 'white',
                         fontSize: 15,
                       }}>
-                      00XX12442022
+                      Detail Pemesanan
                     </Text>
-                  </TouchableOpacity>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
+                  </View>
+                  <View
                     style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    Keterangan
-                  </Text>
+                      position: 'relative',
+                      flexDirection: 'column',
 
-                  <Text
-                    style={{
-                      padding: 1,
-                      fontFamily: 'PoppinsRegular',
-                      color: '#65647C',
-                      fontSize: 15,
+                      width: wp('90%'),
+                      borderColor: '#ddd',
+                      borderRadius: 15,
+                      marginTop: 10,
+                      padding: 10,
+                      backgroundColor: '#fff',
+                      elevation: 5,
                     }}>
-                    {userInfo.customer_desc}
-                  </Text>
-                </View>
-              </SkeletonContent>
-              <SkeletonContent
-                containerStyle={{}}
-                isLoading={isLoading}
-                animationType="pulse"
-                layout={[
-                  {
-                    key: 'someId',
-                    width: wp('83%'),
-                    height: 20,
-                    marginTop: 5,
-                    marginRight: 1,
-                    marginLeft: 3,
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <View style={styles.TextViewDetail}>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: '#333',
-                      fontSize: 18,
-                    }}>
-                    Jumlah Beli
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: 'PoppinsRegular',
-                      color: 'green',
-                      fontSize: 20,
-                    }}>
-                    {userInfo?.case_has_transactionsdetail?.qty}
-                  </Text>
-                </View>
-              </SkeletonContent>
-              {/* <View style={styles.TextViewDetail}>
+                    {/* Coin and symbol */}
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('30%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginBottom: 10,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 5,
+                          alignItems: 'center',
+                          marginHorizontal: 4,
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsBold',
+                            color: '#333',
+                            fontSize: 15,
+                          }}>
+                          Rincian Pemesan
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          No HP
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#65647C',
+                            fontSize: 15,
+                          }}>
+                          {userInfo.customer?.user?.phone}
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          Desa
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#65647C',
+                            fontSize: 15,
+                          }}>
+                          {userInfo.customer?.villages?.village_name}
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          Nama
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#65647C',
+                            fontSize: 15,
+                          }}>
+                          {userInfo.customer?.nama_customer}
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('30%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          marginBottom: 10,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 10,
+                          alignItems: 'center',
+                          marginHorizontal: 4,
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsBold',
+                            color: '#333',
+                            fontSize: 15,
+                          }}>
+                          Rincian Pesanan
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          Tanggal
+                        </Text>
+                        <TouchableOpacity>
+                          <Text
+                            style={{
+                              fontFamily: 'PoppinsRegular',
+                              color: '#65647C',
+                              fontSize: 15,
+                            }}>
+                            {fullDate(
+                              userInfo?.case_has_transactionsdetail?.created_at,
+                            )}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          No. Nota
+                        </Text>
+                        <TouchableOpacity>
+                          <Text
+                            style={{
+                              fontFamily: 'PoppinsRegular',
+                              color: '#65647C',
+                              fontSize: 15,
+                            }}>
+                            00XX12442022
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          Keterangan
+                        </Text>
+
+                        <Text
+                          style={{
+                            padding: 1,
+                            fontFamily: 'PoppinsRegular',
+                            color: '#65647C',
+                            fontSize: 15,
+                          }}>
+                          {userInfo.customer_desc}
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    <SkeletonContent
+                      containerStyle={{}}
+                      isLoading={isLoading}
+                      animationType="pulse"
+                      layout={[
+                        {
+                          key: 'someId',
+                          width: wp('83%'),
+                          height: 20,
+                          marginTop: 5,
+                          marginRight: 1,
+                          marginLeft: 3,
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <View style={styles.TextViewDetail}>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 18,
+                          }}>
+                          Jumlah Beli
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: 'PoppinsRegular',
+                            color: 'green',
+                            fontSize: 20,
+                          }}>
+                          {userInfo?.case_has_transactionsdetail?.qty}
+                        </Text>
+                      </View>
+                    </SkeletonContent>
+                    {/* <View style={styles.TextViewDetail}>
                 <Text
                   style={{
                     fontFamily: 'PoppinsRegular',
@@ -527,17 +579,113 @@ const HomeView = ({}) => {
                   adad
                 </Text>
               </View> */}
+                    {statusDeliver === 'waiting' ? (
+                      <View style={{alignItems: 'flex-end'}}>
+                        <TouchableOpacity
+                          style={styles.buttonContainerBatal}
+                          onPress={() => tampilModal()}>
+                          <Text style={{color: 'white'}}>Batalkan Pesanan</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      ''
+                    )}
+                  </View>
+                </View>
+              </View>
             </View>
-          </View>
+          </ScrollView>
         </View>
-      </View>
-    </ScrollView>
+      ) : (
+        <View>
+          <HomeHeader amount={0} />
+          <ScrollView
+            automaticallyAdjustContentInsets={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}>
+            <View style={styles.body}>
+              <View style={styles.bodyContent}>
+                <View style={{flexDirection: 'column'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      marginTop: wp('50%'),
+                    }}>
+                    <View
+                      style={{
+                        position: 'relative',
+                        flexDirection: 'column',
+                        height: hp('20%'),
+                        width: wp('90%'),
+                        borderColor: '#ddd',
+                        borderRadius: 10,
+                        marginTop: 10,
+                        padding: 10,
+                        backgroundColor: 'white',
+                        elevation: 5,
+                        alignContent: 'center',
+                      }}>
+                      <View style={{alignItems: 'center'}}>
+                        <Text
+                          style={{
+                            marginTop: 20,
+                            fontFamily: 'PoppinsRegular',
+                            color: '#333',
+                            fontSize: 15,
+                          }}>
+                          Belum Ada Pesanan Baru
+                        </Text>
+                        <TouchableOpacity
+                          style={styles.buttonContainerNewOrder}
+                          onPress={() => navigation.navigate('Buat Pesanan')}>
+                          <FontAwesomeIcon
+                            icon={faPlus}
+                            size={20}
+                            color={'white'}
+                          />
+                          {/* <Text style={{color: 'white'}}>Tambah Pesanan</Text> */}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      )}
+    </View>
   );
 };
 
 export default HomeView;
 
 const styles = StyleSheet.create({
+  buttonContainerBatal: {
+    marginTop: 20,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+
+    width: 120,
+    borderRadius: 30,
+    backgroundColor: '#DC3535',
+  },
+  buttonContainerNewOrder: {
+    marginTop: 20,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+
+    width: 120,
+    borderRadius: 30,
+    backgroundColor: '#222222',
+  },
   container: {
     width: Dimensions.get('screen').width,
     height: Dimensions.get('screen').height,
@@ -553,7 +701,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 50,
   },
-  body: {},
+  body: {
+    marginTop: 70,
+  },
   bodyContent: {
     flex: 1,
     alignItems: 'center',

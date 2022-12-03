@@ -73,33 +73,33 @@ function App() {
 
   useEffect(() => {
     init();
-    getData();
+    // getData();
   }, []);
 
-  const getData = () => {
-    setIsLoading(true);
-    authAxios
-      .get(`/v1/transactions`, {})
-      .then(res => {
-        setUserInfo(res.data.data);
-        setStatusDeliver(
-          res.data.data.case_has_transactionstatus?.transaction_status_id,
-        );
-        // setAmount(res.data.data.money_total);
-        setAmount(123);
-        console.log('money total',res.data.data.money_total);
-        setRefreshing(false);
-      })
-      .catch(e => {
-        console.log(`register error ${e}`);
-      })
-      .finally(() => setIsLoading(false));
-  };
+  // const getData = () => {
+  //   setIsLoading(true);
+  //   authAxios
+  //     .get(`/v1/transactions`, {})
+  //     .then(res => {
+  //       setUserInfo(res.data.data);
+  //       setStatusDeliver(
+  //         res.data.data.case_has_transactionstatus?.transaction_status_id,
+  //       );
+  //       // setAmount(res.data.data.money_total);
+  //       setAmount(123);
+  //       console.log('money total',res.data.data.money_total);
+  //       setRefreshing(false);
+  //     })
+  //     .catch(e => {
+  //       console.log(`register error ${e}`);
+  //     })
+  //     .finally(() => setIsLoading(false));
+  // };
 
   function Home() {
     return (
       <View style={{backgroundColor: '#344D67', flex: 1}}>
-        <HomeHeader amount={amount} />
+        {/* <HomeHeader /> */}
         <HomeView />
       </View>
     );

@@ -14,48 +14,7 @@ import {BASE_URL} from '../config';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-export default function HomeHeader({}) {
-  const token = useSelector(state => state.Reducers.authToken);
-
-  const [loading, setLoading] = useState(true);
-
-  const [userInfo, setUserInfo] = useState({});
-  const [statusDeliver, setStatusDeliver] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(true);
-  const [amount, setAmount] = useState(0);
-
-  const authAxios = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = () => {
-    setIsLoading(true);
-    authAxios
-      .get(`/v1/transactions`, {})
-      .then(res => {
-        setUserInfo(res.data.data);
-        setStatusDeliver(
-          res.data.data.case_has_transactionstatus?.transaction_status_id,
-        );
-        // setAmount(res.data.data.money_total);
-        setAmount(res.data.data.money_total);
-        console.log('money total', res.data.data.money_total);
-        setRefreshing(false);
-      })
-      .catch(e => {
-        console.log(`register error ${e}`);
-      })
-      .finally(() => setIsLoading(false));
-  };
-
+export default function HomeHeader({amount}) {
   return (
     <View style={styles.container}>
       <WavyHeader

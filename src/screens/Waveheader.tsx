@@ -10,13 +10,14 @@ import {
   Animated,
   Image,
 } from 'react-native';
+import {numberWithCommas} from '../helper';
 
 export default function WavyHeader({
   customStyles,
   customWavePattern,
   customBgColor,
   showHeader,
-  amount
+  amount,
 }) {
   return (
     <View style={customStyles}>
@@ -39,26 +40,43 @@ export default function WavyHeader({
             <Text
               style={{
                 alignSelf: 'center',
-                marginRight: 20,
+                // marginRight: 20,
                 fontSize: 18,
                 color: '#393E46',
                 fontWeight: '400',
+                fontFamily: 'PoppinsRegular',
               }}>
               {' '}
-              Total Bayar
+              TOTAL BAYAR
             </Text>
-            <Text
+            <View
               style={{
-                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'row',
                 alignSelf: 'center',
-                marginRight: 20,
-                fontSize: 40,
-                color: '#22A39F',
-                fontWeight: '600',
+                // marginRight: 20,
               }}>
-              {' '}
-              {`Rp.${amount}`}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 30,
+                  alignSelf: 'center',
+                  color: '#3D5656',
+                  fontWeight: '600',
+                }}>
+                {' '}
+                Rp.
+              </Text>
+              <Text
+                style={{
+                  fontSize: 40,
+                  color: '#22A39F',
+                  fontWeight: '600',
+                }}>
+                {' '}
+                {`${numberWithCommas(amount)}`}
+              </Text>
+            </View>
+
             {/* <Text
               style={{
                 color: 'black',
