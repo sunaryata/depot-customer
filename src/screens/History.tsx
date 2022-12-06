@@ -1,7 +1,5 @@
-/* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, {useState, Component, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   Text,
   View,
@@ -10,15 +8,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
-  Modal,
-  Pressable,
-  Alert,
-  ActivityIndicator,
-  RefreshControl,
-  TextInput,
-  ToastAndroid,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -26,7 +16,7 @@ import {
 import {dummyData} from '../constants';
 import HistoryHeader from './HistoryHeader';
 
-const HistoryView = params => {
+const HistoryView = () => {
   useEffect(() => {}, []);
 
   return (

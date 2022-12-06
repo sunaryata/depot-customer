@@ -1,29 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {
-  faCheck,
-  faDroplet,
-  faMinus,
-  faPlus,
-  faTruckLoading,
-} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+/* eslint-disable react-hooks/exhaustive-deps */
+import {useIsFocused} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
-import StepIndicator from 'react-native-step-indicator';
 import {
   Text,
   View,
   StyleSheet,
   Image,
-  SafeAreaView,
   ScrollView,
   Dimensions,
   TouchableOpacity,
-  RefreshControl,
   TextInput,
 } from 'react-native';
 
@@ -31,26 +17,20 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import ScreenOne from './HomeHeader';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {BASE_URL} from '../config';
-import {fullDate} from '../helper';
-import SkeletonContent from 'react-native-skeleton-content-nonexpo';
-import HomeHeader from './HomeHeader';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import OrderHeader from './OrderHeader';
 
 const OrderView = ({}) => {
   const isFocused = useIsFocused();
-  const navigation = useNavigation();
   const token = useSelector(state => state.Reducers.authToken);
   const [userInfo, setUserInfo] = useState({});
-  const [statusDeliver, setStatusDeliver] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(true);
-  const [amount, setAmount] = useState(0);
-  const [showAlert, setShowAlert] = useState(false);
+  const [, setStatusDeliver] = useState('');
+  const [, setIsLoading] = useState(false);
+  const [, setRefreshing] = useState(true);
+  const [, setAmount] = useState(0);
+  const [, setShowAlert] = useState(false);
 
   const authAxios = axios.create({
     baseURL: BASE_URL,
@@ -59,14 +39,14 @@ const OrderView = ({}) => {
     },
   });
 
-  const onRefresh = () => {
-    //Clear old data of the list
-    setUserInfo({});
-    setAmount(0);
-    //Call the Service to get the latest data
-    getData();
-    setStatusDeliver('');
-  };
+  // const onRefresh = () => {
+  //   //Clear old data of the list
+  //   setUserInfo({});
+  //   setAmount(0);
+  //   //Call the Service to get the latest data
+  //   getData();
+  //   setStatusDeliver('');
+  // };
 
   const getData = () => {
     setIsLoading(true);
@@ -96,55 +76,55 @@ const OrderView = ({}) => {
     setAmount(0);
   }, [isFocused]);
 
-  const tampilModal = () => {
-    setShowAlert(true);
-  };
-  const sembunyiModal = () => {
-    setShowAlert(false);
-  };
-  const cancelOrder = () => {
-    authAxios
-      .put(`${BASE_URL}/v1/transactions/${userInfo.transaction_id}`, {})
-      .then(function (response) {
-        setShowAlert(false);
-        setUserInfo({});
-        getData();
-      })
-      .catch(function (error) {
-        console.log(error.response?.data?.message);
-      });
-  };
+  // const tampilModal = () => {
+  //   setShowAlert(true);
+  // };
+  // const sembunyiModal = () => {
+  //   setShowAlert(false);
+  // };
+  // const cancelOrder = () => {
+  //   authAxios
+  //     .put(`${BASE_URL}/v1/transactions/${userInfo.transaction_id}`, {})
+  //     .then(function () {
+  //       setShowAlert(false);
+  //       setUserInfo({});
+  //       getData();
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error.response?.data?.message);
+  //     });
+  // };
 
-  const labels = ['Menunggu', 'Diantar', 'Sampai'];
+  // const labels = ['Menunggu', 'Diantar', 'Sampai'];
 
-  var dict = {
-    waiting: 0,
-    delivering: 1,
-    delivered: 2,
-  };
-  const customStyles = {
-    stepIndicatorSize: 25,
-    currentStepIndicatorSize: 30,
-    separatorStrokeWidth: 2,
-    currentStepStrokeWidth: 3,
-    stepStrokeCurrentColor: '#fe7013',
-    stepStrokeWidth: 3,
-    stepStrokeFinishedColor: '#fe7013',
-    stepStrokeUnFinishedColor: '#aaaaaa',
-    separatorFinishedColor: '#fe7013',
-    separatorUnFinishedColor: '#aaaaaa',
-    stepIndicatorFinishedColor: '#fe7013',
-    stepIndicatorUnFinishedColor: '#ffffff',
-    stepIndicatorCurrentColor: '#ffffff',
-    stepIndicatorLabelFontSize: 13,
-    currentStepIndicatorLabelFontSize: 13,
-    stepIndicatorLabelCurrentColor: '#fe7013',
-    stepIndicatorLabelFinishedColor: '#ffffff',
-    stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-    labelColor: '#999999',
-    labelSize: 13,
-    currentStepLabelColor: '#fe7013',
-  };
+  // var dict = {
+  //   waiting: 0,
+  //   delivering: 1,
+  //   delivered: 2,
+  // };
+  // const customStyles = {
+  //   stepIndicatorSize: 25,
+  //   currentStepIndicatorSize: 30,
+  //   separatorStrokeWidth: 2,
+  //   currentStepStrokeWidth: 3,
+  //   stepStrokeCurrentColor: '#fe7013',
+  //   stepStrokeWidth: 3,
+  //   stepStrokeFinishedColor: '#fe7013',
+  //   stepStrokeUnFinishedColor: '#aaaaaa',
+  //   separatorFinishedColor: '#fe7013',
+  //   separatorUnFinishedColor: '#aaaaaa',
+  //   stepIndicatorFinishedColor: '#fe7013',
+  //   stepIndicatorUnFinishedColor: '#ffffff',
+  //   stepIndicatorCurrentColor: '#ffffff',
+  //   stepIndicatorLabelFontSize: 13,
+  //   currentStepIndicatorLabelFontSize: 13,
+  //   stepIndicatorLabelCurrentColor: '#fe7013',
+  //   stepIndicatorLabelFinishedColor: '#ffffff',
+  //   stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+  //   labelColor: '#999999',
+  //   labelSize: 13,
+  //   currentStepLabelColor: '#fe7013',
+  // };
 
   return (
     <View>
@@ -231,14 +211,13 @@ const OrderView = ({}) => {
                         elevation: 5,
                         alignContent: 'center',
                       }}>
-                      <View style={{alignItems: 'center', marginVertical : 30}}>
+                      <View style={{alignItems: 'center', marginVertical: 30}}>
                         <Text
                           style={{
                             fontFamily: 'PoppinsRegular',
                             color: '#333',
                             fontSize: 20,
                             marginVertical: 20,
-                            
                           }}>
                           Tambah Pesanan Baru
                         </Text>
@@ -266,9 +245,8 @@ const OrderView = ({}) => {
                         <View style={styles.inputView}>
                           <TextInput
                             style={styles.TextInput}
-                     
                             placeholderTextColor="#003f5c"
-                           
+
                             // onChangeText={(jumlah_bayar) =>
                             //   setJumlahBayar(jumlah_bayar)
                             // }

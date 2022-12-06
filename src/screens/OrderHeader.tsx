@@ -1,13 +1,5 @@
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-  Image,
-} from 'react-native';
+/* eslint-disable react/react-in-jsx-scope */
+import {View, StyleSheet, Dimensions} from 'react-native';
 import WavyHeader from './Waveheader';
 
 export default function OrderHeader() {

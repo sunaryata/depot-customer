@@ -1,1 +1,1 @@
-export {default as dummyData} from './Dummy'
+export {default as dummyData} from './Dummy';

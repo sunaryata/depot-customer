@@ -1,18 +1,5 @@
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-  Image,
-} from 'react-native';
+import React, {View, StyleSheet, Dimensions} from 'react-native';
 import WavyHeader from './Waveheader';
-import {useState, useEffect} from 'react';
-import {BASE_URL} from '../config';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 
 export default function HomeHeader({amount}) {
   return (

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import React from 'react'
-import { StyleSheet, Text, View,TouchableOpacity,Image } from 'react-native'
+import React from 'react';
+import { StyleSheet, Text, View,TouchableOpacity,Image } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const ActionCenter = ({ img_src, img_text }) => {
@@ -15,8 +15,8 @@ const ActionCenter = ({ img_src, img_text }) => {
         </Text>
       </TouchableOpacity>
     );
-}
+};
 
-export default ActionCenter
+export default ActionCenter;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

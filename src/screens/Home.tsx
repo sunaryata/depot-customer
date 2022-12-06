@@ -1,24 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/self-closing-comp */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {
-  faCheck,
-  faDroplet,
-  faMinus,
-  faPlus,
-} from '@fortawesome/free-solid-svg-icons';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {useEffect, useState} from 'react';
-import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
 import StepIndicator from 'react-native-step-indicator';
 import {
   Text,
   View,
   StyleSheet,
-  Image,
-  SafeAreaView,
   ScrollView,
   Dimensions,
   TouchableOpacity,
@@ -29,7 +19,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import ScreenOne from './HomeHeader';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {BASE_URL} from '../config';
@@ -102,7 +91,7 @@ const HomeView = ({}) => {
   const cancelOrder = () => {
     authAxios
       .put(`${BASE_URL}/v1/transactions/${userInfo.transaction_id}`, {})
-      .then(function (response) {
+      .then(function () {
         setShowAlert(false);
         setUserInfo({});
         getData();
@@ -161,7 +150,7 @@ const HomeView = ({}) => {
             showConfirmButton={true}
             cancelText="Tidak yakin"
             confirmText="Ya, Batalkan"
-            cancelButtonColor='black'
+            cancelButtonColor="black"
             confirmButtonColor="green"
             onCancelPressed={() => {
               sembunyiModal();

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -5,11 +6,10 @@ import {
   View,
   Image,
   TextInput,
-  Button,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Login} from '../redux/actions';
 export const MyLogin = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ export const MyLogin = () => {
           placeholder="No. HP"
           placeholderTextColor="#003f5c"
           keyboardType="numeric"
-          onChangeText={email => setEmail(email)}
+          onChangeText={value => setEmail(value)}
         />
       </View>
 
@@ -44,7 +44,7 @@ export const MyLogin = () => {
           placeholder="kata sandi"
           keyboardType="numeric"
           placeholderTextColor="#003f5c"
-          onChangeText={password => setPassword(password)}
+          onChangeText={value => setPassword(value)}
         />
       </View>
       <TouchableOpacity style={styles.loginBtn} onPress={() => submit()}>

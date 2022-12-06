@@ -42,7 +42,7 @@ import OrderView from '../screens/Order';
 function HomeScreen({navigation}) {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{color: 'black'}}></Text>
+      <Text style={{color: 'black'}} />
     </View>
   );
 }
@@ -293,7 +293,7 @@ function App() {
                 translateX: tabOffsetValue,
               },
             ],
-          }}></Animated.View>
+          }} />
       </NavigationContainer>
     );
   }

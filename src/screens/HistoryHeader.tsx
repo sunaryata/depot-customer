@@ -1,13 +1,4 @@
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-  Image,
-} from 'react-native';
+import React, {View, StyleSheet, Dimensions} from 'react-native';
 import WavyHeader from './Waveheader';
 
 export default function HistoryHeader() {

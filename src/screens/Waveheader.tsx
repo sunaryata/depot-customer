@@ -1,15 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/react-in-jsx-scope */
 import {Svg, Path} from 'react-native-svg';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {numberWithCommas} from '../helper';
 
 export default function WavyHeader({
