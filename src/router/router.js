@@ -211,7 +211,7 @@ function App() {
                     style={{
                       width: 60,
                       height: 60,
-                      backgroundColor: '#FB2576',
+                      backgroundColor: '#FED049',
                       borderRadius: 50,
                       justifyContent: 'center',
                       alignItems: 'center',
@@ -282,7 +282,7 @@ function App() {
           style={{
             width: getWidth() - 50,
             height: 4,
-            backgroundColor: '#FB2576',
+            backgroundColor: '#FED049',
             position: 'absolute',
             left: 70,
             bottom: 109,
