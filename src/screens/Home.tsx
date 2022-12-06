@@ -100,8 +100,16 @@ const HomeView = ({}) => {
     setShowAlert(false);
   };
   const cancelOrder = () => {
-    console.log('order dibatalkan');
-    setShowAlert(false);
+    authAxios
+      .put(`${BASE_URL}/v1/transactions/${userInfo.transaction_id}`, {})
+      .then(function (response) {
+        setShowAlert(false);
+        setUserInfo({});
+        getData();
+      })
+      .catch(function (error) {
+        console.log(error.response?.data?.message);
+      });
   };
 
   const labels = ['Menunggu', 'Diantar', 'Sampai'];
@@ -146,14 +154,15 @@ const HomeView = ({}) => {
             useNativeDriver={true}
             overlayStyle={{height: '100%'}}
             title="Peringatan"
-            message="Batalkan pesanan?"
+            message="Yakin ingin batalkan pesanan?"
             closeOnTouchOutside={false}
             closeOnHardwareBackPress={false}
             showCancelButton={true}
             showConfirmButton={true}
             cancelText="Tidak yakin"
             confirmText="Ya, Batalkan"
-            confirmButtonColor="#DD6B55"
+            cancelButtonColor='black'
+            confirmButtonColor="green"
             onCancelPressed={() => {
               sembunyiModal();
             }}
@@ -485,7 +494,7 @@ const HomeView = ({}) => {
                               color: '#65647C',
                               fontSize: 15,
                             }}>
-                            00XX12442022
+                            {userInfo.invoice}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -632,7 +641,7 @@ const HomeView = ({}) => {
                             marginTop: 20,
                             fontFamily: 'PoppinsRegular',
                             color: '#333',
-                            fontSize: 15,
+                            fontSize: 20,
                           }}>
                           Belum Ada Pesanan Baru
                         </Text>

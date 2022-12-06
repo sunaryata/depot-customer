@@ -12,7 +12,7 @@ import {
   Animated,
   TouchableHighlight,
 } from 'react-native';
-import {NavigationContainer, useIsFocused} from '@react-navigation/native';
+import {NavigationContainer, useIsFocused, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Provider, useDispatch, useSelector} from 'react-redux';
@@ -37,6 +37,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import OrderHeader from '../screens/OrderHeader';
 import {BASE_URL} from '../config';
 import axios from 'axios';
+import OrderView from '../screens/Order';
 
 function HomeScreen({navigation}) {
   return (
@@ -52,7 +53,6 @@ function App() {
   const token = useSelector(state => state.Reducers.authToken);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-
   const [userInfo, setUserInfo] = useState({});
   const [statusDeliver, setStatusDeliver] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -106,9 +106,12 @@ function App() {
   }
 
   function EmptyScreen() {
+  const navigation = useNavigation();
+
     return (
       <View style={{backgroundColor: '#344D67', flex: 1}}>
-        <OrderHeader />
+        {/* <OrderHeader /> */}
+        <OrderView />
       </View>
     );
   }
@@ -202,7 +205,8 @@ function App() {
             options={{
               headerShown: false,
               tabBarIcon: ({focused, props, navigation}) => (
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Riwayat')}>
                   <View
                     style={{
                       width: 60,

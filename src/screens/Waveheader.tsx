@@ -14,6 +14,8 @@ import {numberWithCommas} from '../helper';
 
 export default function WavyHeader({
   customStyles,
+  customHeight,
+  customTop,
   customWavePattern,
   customBgColor,
   showHeader,
@@ -21,12 +23,12 @@ export default function WavyHeader({
 }) {
   return (
     <View style={customStyles}>
-      <View style={{backgroundColor: customBgColor, height: 100}}>
+      <View style={{backgroundColor: customBgColor, height: customHeight}}>
         <Svg
           height="90%"
           width="100%"
           viewBox="0 0 1440 320"
-          style={{position: 'absolute', top: 94}}>
+          style={{position: 'absolute', top: customTop}}>
           <Path fill={customBgColor} d={customWavePattern} />
         </Svg>
         {showHeader ? (
@@ -145,8 +147,9 @@ const styles = StyleSheet.create({
   },
   inforiwayat: {
     fontSize: 35,
-    color: '#FCFDF2',
-    marginTop: 10,
+    fontFamily: 'PoppinsRegular',
+    color: '#495579',
+    marginTop: 1,
     fontWeight: '500',
   },
 });
